@@ -146,7 +146,7 @@ options:
 ```
 
 ```bash
-python3 src/biohelpers/parse_longest_mrna.py -g example/Nipponbare.fa -f example/Nipponbare.gff3 -o test/longest.pep.fa
+parse_longest_mrna -g example/Nipponbare.fa -f example/Nipponbare.gff3 -o test/longest.pep.fa
 ```
 
 ```bash
@@ -163,7 +163,7 @@ Gene and transcript information saved to: example/Nipponbare.gene.info.txt
 ### process blast results
 
 ```bash
-process_blast_result -i example/diamond.blast.txt -e 1e-6 -o test/filtered.blast.txt
+process_blast -i example/diamond.blast.txt -e 1e-6 -o test/filtered.blast.txt
 ```
 
 ```bash
