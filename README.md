@@ -3,6 +3,16 @@ GeneFamily
 ## Installation
 
 ```bash
+git clone git@github.com:lixiang117423/biohelpers_python.git
+
+cd biohelpers_python
+
+pip install -e .
+```
+
+or:
+
+```bash
 pip install biohelpers
 ```
 
