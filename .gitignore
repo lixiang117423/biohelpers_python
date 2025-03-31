@@ -5,4 +5,5 @@ example/longest.pep.fa
 example/Nipponbare.gene.info.txt
 biohelpers.egg-info/
 dist/
-
+example/diamond.blast.txt
+test/filtered.blast.txt 
