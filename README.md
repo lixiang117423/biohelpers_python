@@ -160,8 +160,19 @@ Longest transcript protein sequences saved to: test/longest.pep.fa
 Gene and transcript information saved to: example/Nipponbare.gene.info.txt
 ```
 
+### process blast results
+
+```bash
+process_blast_result -i example/diamond.blast.txt -e 1e-6 -o test/filtered.blast.txt
+```
+
+```bash
+Successfully processed 85500 query sequences, retained 85500 records.
+Results saved to: test/filtered.blast.txt
+```
 
 ## Requirements
 
 - Python 3.7+
 - requests>=2.31.0
+
