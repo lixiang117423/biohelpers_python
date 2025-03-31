@@ -163,6 +163,20 @@ Gene and transcript information saved to: example/Nipponbare.gene.info.txt
 ### process blast results
 
 ```bash
+process_blast -h
+usage: process_blast [-h] -i INPUT [-e EVALUE] -o OUTPUT [-n NUMBER]
+
+Process BLAST results and filter by E-value
+
+options:
+  -h, --help           show this help message and exit
+  -i, --input INPUT    Input BLAST result file
+  -e, --evalue EVALUE  E-value threshold (default: 1e-5)
+  -o, --output OUTPUT  Output file path
+  -n, --number NUMBER  Number of top hits to retain per query (default: 1)
+```
+
+```bash
 process_blast -i example/diamond.blast.txt -e 1e-6 -o test/filtered.blast.txt
 ```
 
