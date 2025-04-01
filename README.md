@@ -195,6 +195,35 @@ Successfully processed 85500 query sequences, retained 85500 records.
 Results saved to: test/filtered.blast.txt
 ```
 
+## run [hisat2[(https://github.com/DaehwanKimLab/hisat2)
+
+```bash
+usage: run_hisat2.py [-h] -x INDEX [-t THREADS] -f FOLDER [-m {run,save}] -o OUTPUT
+
+HISAT2 RNA-seq alignment pipeline
+
+options:
+  -h, --help            show this help message and exit
+  -x, --index INDEX     Reference genome index path
+  -t, --threads THREADS
+                        Number of threads (default: all cores)
+  -f, --folder FOLDER   Input directory containing FASTQ files
+  -m, --method {run,save}
+                        Execution method: run immediately or save to script
+  -o, --output OUTPUT   Output directory for BAM files
+```
+
+```bash
+run_hisat2 -x 03.genome/acuce.genome.hisat2.index -t 60 -f 01.data -m save -o 04.mapping 
+```
+
+```bash
+Please run the following command to execute the alignment:
+bash run_hisat2.sh
+```
+
+
+
 ## Requirements
 
 - Python 3.7+
