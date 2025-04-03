@@ -134,17 +134,13 @@ def parse_longest_mrna(genome_path, gff3_path, output_path):
                             f"{transcript_info['strand']}\t{transcript_info['chrom']}\n")
     
     # 输出统计信息
-    # Output statistical information
-    # 统计多转录本基因
-    # Count genes with multiple transcripts
-    multi_transcript_genes = sum(1 for transcripts in cds_calculator.gene_transcripts.values() if len(transcripts) > 1)
-    total_transcripts = sum(len(transcripts) for transcripts in cds_calculator.gene_transcripts.values())
-
-    print("################################################################")
-    print(f'Total genes: {len(longest_transcripts)}')
-    print(f'Total transcripts: {total_transcripts}')
-    print(f'Genes with multiple transcripts: {multi_transcript_genes}')
-
+    # Output statistics
+    print(f"Total genes processed: {gene_count}")
+    print(f"Genes with multiple transcripts: {multi_isoform_genes}")
+    print(f"Average transcript length: {avg_length:.2f}")
+    
+    # Temporary file path for transcript IDs
+    # Preserve temporary files for debugging
     # Generate temporary ID file
     with tempfile.NamedTemporaryFile(mode='w+', delete=False, encoding='utf-8') as id_file:
         for gene_id, transcript_info in longest_transcripts.items():

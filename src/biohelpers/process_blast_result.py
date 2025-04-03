@@ -40,7 +40,7 @@ def main():
             for gene, records in best_hits.items():
                 if records:
                     sorted_records = sorted(records, key=lambda x: (-x[0], -x[1]))
-                    # 验证字段索引有效性
+                    # Validate field index validity
                     if len(fields) < 12:
                         print(f"Warning: Line {line.strip()} lacks required fields, skipped")
                         continue

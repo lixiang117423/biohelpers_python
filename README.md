@@ -222,6 +222,33 @@ Please run the following command to execute the alignment:
 bash run_hisat2.sh
 ```
 
+## get haplotype information
+
+```bash 
+get_hap -h
+usage: get_hap.py [-h] -v VCF -c CHR -p POSITION [-s START] [-e END] -t {sample,hap} -o OUTPUT
+
+Extract haplotype information from VCF files
+
+options:
+  -h, --help            show this help message and exit
+  -v VCF, --vcf VCF     Input VCF file path
+  -c CHR, --chr CHR     Chromosome identifier
+  -p POSITION, --position POSITION
+                        Target SNP position
+  -s START, --start START
+                        Upstream window size
+  -e END, --end END     Downstream window size
+  -t {sample,hap}, --type {sample,hap}
+                        Output type
+  -o OUTPUT, --output OUTPUT
+                        Output file path
+```
+
+```bash
+get_hap -v example/chr1.36545388.snp.vcf -c Chr1 -p 36545388 -t sample -o test.vcf.txt
+```
+
 
 
 ## Requirements

@@ -64,9 +64,9 @@ def run_hisat2(index, threads, folder, output, method):
             except subprocess.CalledProcessError as e:
                 print(f"Command execution failed: {e}")
                 sys.exit(1)
-         # Bug修复：原代码中`elif method == 'save':`存在语法问题，推测后续需要添加逻辑代码块
-        elif method == 'save':
-            pass  # 这里可以添加对应的逻辑代码，当前先占位
+        # Merge hisat2 alignment and samtools sorting
+        # Bugfix: Original code `elif method == 'save':` had syntax issues, need to add logic block
+        pass  # Placeholder for future logic implementation
             script_path = Path("run_hisat2.sh")
             with open(script_path, 'w') as f:
                 pass
@@ -104,4 +104,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    

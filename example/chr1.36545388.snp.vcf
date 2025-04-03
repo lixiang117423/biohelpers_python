@@ -1,0 +1,35 @@
+##fileformat=VCFv4.2
+##FILTER=<ID=PASS,Description="All filters passed">
+##FILTER=<ID=RefCall,Description="Genotyping model thinks this site is reference.">
+##FILTER=<ID=LowQual,Description="Confidence in this variant being real is below calling threshold.">
+##FILTER=<ID=NoCall,Description="Site has depth=0 resulting in no call.">
+##INFO=<ID=END,Number=1,Type=Integer,Description="End position (for use with symbolic alleles)">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Conditional genotype quality">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+##FORMAT=<ID=MIN_DP,Number=1,Type=Integer,Description="Minimum DP observed within the GVCF block.">
+##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Read depth for each allele">
+##FORMAT=<ID=VAF,Number=A,Type=Float,Description="Variant allele fractions.">
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="Phred-scaled genotype likelihoods rounded to the closest integer">
+##FORMAT=<ID=MED_DP,Number=1,Type=Integer,Description="Median DP observed within the GVCF block rounded to the nearest integer.">
+##DeepVariant_version=1.6.0
+##contig=<ID=Chr1,length=44361539>
+##contig=<ID=Chr2,length=37764328>
+##contig=<ID=Chr3,length=39691490>
+##contig=<ID=Chr4,length=35849732>
+##contig=<ID=Chr5,length=31237231>
+##contig=<ID=Chr6,length=32465040>
+##contig=<ID=Chr7,length=30277827>
+##contig=<ID=Chr8,length=29952003>
+##contig=<ID=Chr9,length=24760661>
+##contig=<ID=Chr10,length=25582588>
+##contig=<ID=Chr11,length=31778392>
+##contig=<ID=Chr12,length=26601357>
+##bcftools_mergeVersion=1.17+htslib-1.18
+##bcftools_mergeCommand=merge -m both -Oz -o acuce.merged.vcf.gz vcf/100.vcf.gz vcf/101.vcf.gz vcf/10.vcf.gz vcf/11.vcf.gz vcf/12.vcf.gz vcf/13.vcf.gz vcf/14.vcf.gz vcf/15.vcf.gz vcf/16.vcf.gz vcf/17.vcf.gz vcf/18.vcf.gz vcf/19.vcf.gz vcf/1.vcf.gz vcf/20.vcf.gz vcf/21.vcf.gz vcf/22.vcf.gz vcf/23.vcf.gz vcf/24.vcf.gz vcf/25.vcf.gz vcf/26.vcf.gz vcf/27.vcf.gz vcf/28.vcf.gz vcf/29.vcf.gz vcf/2.vcf.gz vcf/30.vcf.gz vcf/31.vcf.gz vcf/32.vcf.gz vcf/33.vcf.gz vcf/34.vcf.gz vcf/35.vcf.gz vcf/36.vcf.gz vcf/37.vcf.gz vcf/38.vcf.gz vcf/39.vcf.gz vcf/40.vcf.gz vcf/41.vcf.gz vcf/42.vcf.gz vcf/43.vcf.gz vcf/44.vcf.gz vcf/45.vcf.gz vcf/46.vcf.gz vcf/47.vcf.gz vcf/48.vcf.gz vcf/49.vcf.gz vcf/4.vcf.gz vcf/50.vcf.gz vcf/51.vcf.gz vcf/52.vcf.gz vcf/53.vcf.gz vcf/54.vcf.gz vcf/55.vcf.gz vcf/56.vcf.gz vcf/57.vcf.gz vcf/58.vcf.gz vcf/59.vcf.gz vcf/5.vcf.gz vcf/61.vcf.gz vcf/62.vcf.gz vcf/63.vcf.gz vcf/64.vcf.gz vcf/65.vcf.gz vcf/66.vcf.gz vcf/67.vcf.gz vcf/68.vcf.gz vcf/69.vcf.gz vcf/6.vcf.gz vcf/70.vcf.gz vcf/71.vcf.gz vcf/72.vcf.gz vcf/73.vcf.gz vcf/74.vcf.gz vcf/75.vcf.gz vcf/76.vcf.gz vcf/77.vcf.gz vcf/78.vcf.gz vcf/79.vcf.gz vcf/7.vcf.gz vcf/80.vcf.gz vcf/81.vcf.gz vcf/82.vcf.gz vcf/83.vcf.gz vcf/84.vcf.gz vcf/85.vcf.gz vcf/86.vcf.gz vcf/87.vcf.gz vcf/88.vcf.gz vcf/89.vcf.gz vcf/8.vcf.gz vcf/90.vcf.gz vcf/91.vcf.gz vcf/92.vcf.gz vcf/93.vcf.gz vcf/94.vcf.gz vcf/95.vcf.gz vcf/96.vcf.gz vcf/97.vcf.gz vcf/98.vcf.gz vcf/99.vcf.gz vcf/9.vcf.gz; Date=Wed Apr  2 15:16:51 2025
+##bcftools_viewVersion=1.17+htslib-1.18
+##bcftools_viewCommand=view -v snps -Oz -o acuce.snp.merged.vcf.gz acuce.merged.vcf.gz; Date=Wed Apr  2 16:19:26 2025
+##bcftools_viewCommand=view -r Chr1 -Oz -o acuce.chr1.snp.merged.vcf.gz acuce.snp.merged.vcf.gz; Date=Wed Apr  2 16:28:27 2025
+##bcftools_viewCommand=view -Ov -o chr1.36545388.snp.vcf acuce.chr1.snp.merged.vcf.gz Chr1:36545388-36545388; Date=Thu Apr  3 14:40:09 2025
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	100	101	10	11	12	13	14	15	16	17	18	19	1	20	21	22	23	24	25	26	27	28	29	2	30	31	32	33	34	35	36	37	38	39	40	41	42	43	44	45	46	47	48	49	4	50	51	52	53	54	55	56	57	58	59	5	61	62	63	64	65	66	67	68	69	6	70	71	72	73	74	75	76	77	78	79	7	80	81	82	83	84	85	86	87	88	89	8	90	91	92	93	94	95	96	97	98	99	9
+Chr1	36545388	.	C	T	63.1	PASS	.	GT:GQ:DP:AD:VAF:PL	./.:.:.:.:.:.	0/1:43:43:17,26:0.604651:47,0,45	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	0/1:7:27:22,5:0.185185:5,0,36	./.:.:.:.:.:.	0/1:5:27:23,4:0.148148:3,0,37	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	1/1:56:22:0,22:1:58,60,0	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	0/1:40:28:15,13:0.464286:42,0,44	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	0/1:32:27:19,8:0.296296:32,0,47	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	1/1:61:33:0,33:1:63,64,0	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	1/1:54:20:0,19:0.95:59,54,0	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	1/1:60:25:0,25:1:62,64,0	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	0/1:39:29:7,22:0.758621:47,0,39	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	./.:.:.:.:.:.	0/1:43:34:19,15:0.441176:43,0,51	0/1:40:27:15,12:0.444444:41,0,46	1/1:57:21:0,21:1:60,60,0	1/1:60:29:0,29:1:62,63,0	./.:.:.:.:.:.
