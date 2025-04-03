@@ -249,6 +249,18 @@ options:
 get_hap -v example/chr1.36545388.snp.vcf -c Chr1 -p 36545388 -t sample -o test.vcf.txt
 ```
 
+```bash
+Chr	Position	REF	ALT	Sample	GT	Alleles	Frequency	Biological_Meaning
+Chr1	36545388	C	T	100	./.	./.	85.86%	Missing
+Chr1	36545388	C	T	101	0/1	C/T	8.08%	Heterozygous
+Chr1	36545388	C	T	10	./.	./.	85.86%	Missing
+Chr1	36545388	C	T	11	./.	./.	85.86%	Missing
+Chr1	36545388	C	T	12	./.	./.	85.86%	Missing
+Chr1	36545388	C	T	13	0/1	C/T	8.08%	Heterozygous
+Chr1	36545388	C	T	14	./.	./.	85.86%	Missing
+Chr1	36545388	C	T	15	0/1	C/T	8.08%	Heterozygous
+Chr1	36545388	C	T	16	./.	./.	85.86%	Missing
+```
 
 
 ## Requirements
