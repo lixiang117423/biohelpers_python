@@ -195,7 +195,7 @@ Successfully processed 85500 query sequences, retained 85500 records.
 Results saved to: test/filtered.blast.txt
 ```
 
-## run [hisat2[(https://github.com/DaehwanKimLab/hisat2)
+## run [hisat2](https://github.com/DaehwanKimLab/hisat2)
 
 ```bash
 usage: run_hisat2.py [-h] -x INDEX [-t THREADS] -f FOLDER [-m {run,save}] -o OUTPUT
@@ -246,7 +246,7 @@ options:
 ```
 
 ```bash
-get_hap -v example/chr1.36545388.snp.vcf -c Chr1 -p 36545388 -t sample -o test.vcf.txt
+get_hap -v example/chr1.36545388.snp.vcf -c Chr1 -p 36545388 -o test.vcf.txt
 ```
 
 ```bash
