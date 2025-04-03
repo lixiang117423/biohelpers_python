@@ -226,7 +226,7 @@ bash run_hisat2.sh
 
 ```bash 
 get_hap -h
-usage: get_hap.py [-h] -v VCF -c CHR -p POSITION [-s START] [-e END] -t {sample,hap} -o OUTPUT
+usage: get_hap.py [-h] -v VCF -c CHR -p POSITION [-s START] [-e END] -o OUTPUT
 
 Extract haplotype information from VCF files
 
@@ -239,8 +239,6 @@ options:
   -s START, --start START
                         Upstream window size
   -e END, --end END     Downstream window size
-  -t {sample,hap}, --type {sample,hap}
-                        Output type
   -o OUTPUT, --output OUTPUT
                         Output file path
 ```
