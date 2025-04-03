@@ -1,4 +1,4 @@
-GeneFamily
+Some useful script tools written during data processing.
 
 ## Installation
 
