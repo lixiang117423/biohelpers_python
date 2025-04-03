@@ -9,7 +9,6 @@ def parse_args():
     parser.add_argument('-p', '--position', type=int, required=True, help='Target SNP position')
     parser.add_argument('-s', '--start', type=int, default=0, help='Upstream window size')
     parser.add_argument('-e', '--end', type=int, default=0, help='Downstream window size')
-    parser.add_argument('-t', '--type', choices=['sample', 'hap'], required=True, help='Output type')
     parser.add_argument('-o', '--output', required=True, help='Output file path')
     return parser.parse_args()
 
@@ -81,21 +80,16 @@ def parse_vcf(vcf_path, target_chr, start_pos, end_pos):
     except IOError as e:
         raise ValueError(f'Failed to open VCF file: {str(e)}')
     
-def write_output(output_type, data, output_path, hap_counts):
+def write_output(data, output_path, hap_counts):
     with open(output_path, 'w') as f:
-        if output_type == 'sample':
-            f.write('Chr\tPosition\tREF\tALT\tSample\tGT\tAlleles\tFrequency\tBiological_Meaning\n')
-            total = sum(hap_counts.values()) or 1
-            for sample, genotype_info, ref, alts, chrom, pos in data:
-                freq = hap_counts[genotype_info] / total
-                line = [
-                    chrom, pos, ref, ",".join(alts), sample, genotype_info[0], genotype_info[1], f"{freq:.2%}", genotype_info[2]
-                ]
-                f.write('\t'.join(map(str, line)) + '\n')
-        else:
-            f.write('hap\tallel\tnumber\n')
-            for gt, count in data.items():
-                f.write(f'{gt}\t{count}\n')
+        f.write('Chr\tPosition\tREF\tALT\tSample\tGT\tAlleles\tFrequency\tBiological_Meaning\n')
+        total = sum(hap_counts.values()) or 1
+        for sample, genotype_info, ref, alts, chrom, pos in data:
+            freq = hap_counts[genotype_info] / total
+            line = [
+                chrom, pos, ref, ",".join(alts), sample, genotype_info[0], genotype_info[1], f"{freq:.2%}", genotype_info[2]
+            ]
+            f.write('\t'.join(map(str, line)) + '\n')
 
 def main():
     args = parse_args()
@@ -106,10 +100,7 @@ def main():
     
     sample_data, hap_counts = parse_vcf(args.vcf, args.chr, start_window, end_window)
     
-    if args.type == 'sample':
-        write_output(args.type, sample_data, args.output, hap_counts)
-    else:
-        write_output(args.type, hap_counts, args.output, hap_counts)
+    write_output(sample_data, args.output, hap_counts)
 
 if __name__ == '__main__':
     main()
