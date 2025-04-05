@@ -1,3 +1,8 @@
 [build-system]
-requires = ["setuptools>=61.0.0", "wheel"]
+requires = ["setuptools>=61.0.0", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+version_file = "src/biohelpers/_version.py"
+write_to = "src/biohelpers/_version.py"
+local_scheme = "no-local-version"

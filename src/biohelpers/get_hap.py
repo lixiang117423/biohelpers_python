@@ -3,6 +3,7 @@ import os
 import gzip
 import io
 from collections import defaultdict
+from tabulate import tabulate
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Extract haplotype information from VCF files')
@@ -51,64 +52,109 @@ def process_genotype(gt, ref, alts):
     return (gt, base_combination, biological_meaning)
 
 def parse_vcf(vcf_path, target_chr, start_pos, end_pos):
-    samples = []
-    hap_counts = defaultdict(int)
+    import pandas as pd
     
     try:
-        with open(vcf_path, 'rb') as test_f:
-            header = test_f.read(2)
-    except IOError as e:
-        raise RuntimeError(f'File access error: {str(e)}') from e
+        # 自动检测压缩格式并读取
+        # 获取样本名称
+        with gzip.open(vcf_path, 'rt') if vcf_path.endswith('.gz') else open(vcf_path, 'r') as f:
+            for line in f:
+                if line.startswith('#CHROM'):
+                    samples = line.strip().split('\t')[9:]
+                    if not samples:
+                        raise ValueError('No samples found in VCF header')
+                    break
+        
+        # 读取数据并保留所有样本列
+        # 加载数据并处理压缩格式
+        df = pd.read_csv(
+            vcf_path,
+            compression='gzip' if vcf_path.endswith('.gz') else None,
+            comment='#',
+            sep='\t',
+            header=None,
+            usecols=[0,1,3,4] + list(range(9, 9 + len(samples))),
+            low_memory=False,
+            dtype={'CHROM':'str', 'POS':'int32', 'REF':'str', 'ALT':'str'},
+            names=['CHROM','POS','REF','ALT'] + samples
+        )
+        
+        # 向量化筛选并转换数据格式
+        filtered = df[
+            (df.CHROM == target_chr) & 
+            (df.POS.between(start_pos, end_pos))
+        ].melt(
+            id_vars=['CHROM','POS','REF','ALT'],
+            value_vars=samples,
+            var_name='Sample',
+            value_name='GT'
+        )
 
-    try:
-        # Use context manager to handle files uniformly
-        if header == b'\x1f\x8b':
-            with gzip.open(vcf_path, 'rb') as gz_file:
-                with io.TextIOWrapper(gz_file, encoding='utf-8', errors='replace') as f:
-                    return _process_file(f, target_chr, start_pos, end_pos)
-        else:
-            with open(vcf_path, 'r', encoding='utf-8', errors='replace') as f:
-                return _process_file(f, target_chr, start_pos, end_pos)
-    except (gzip.BadGzipFile, UnicodeDecodeError) as e:
-        raise ValueError(f'File decoding failed: {str(e)}') from e
+        # 批量处理基因型数据
+        sample_data = []
+        hap_counts = defaultdict(int)
+        for _, row in filtered.iterrows():
+            gt = row['GT'].split(':')[0]
+            processed = process_genotype(gt, row['REF'], row['ALT'].split(','))
+            sample_data.append((
+                row['Sample'],
+                processed,
+                row['REF'],
+                row['ALT'].split(','),
+                row['CHROM'],
+                row['POS']
+            ))
+            hap_counts[processed] += 1
+        
+        return sample_data, hap_counts
+        
+    except Exception as e:
+        raise RuntimeError(f'VCF processing error: {str(e)}') from e
 
-def _process_file(f, target_chr, start_pos, end_pos):
-    samples = []
-    hap_counts = defaultdict(int)
-    sample_data = []
-    
-    for line in f:
-        if line.startswith('#CHROM'):
-            samples = line.strip().split('\t')[9:]
-            continue
-        if line.startswith('#'):
-            continue
-        
-        fields = line.strip().split('\t')
-        chrom, pos = fields[0], int(fields[1])
-        
-        if chrom != target_chr or not (start_pos <= pos <= end_pos):
-            continue
-        
-        ref = fields[3]
-        alts = fields[4].split(',')
-        for sample, gt in zip(samples, fields[9:]):
-            processed_gt = process_genotype(gt.split(':')[0], ref, alts)
-            sample_data.append((sample, processed_gt, ref, alts, chrom, pos))
-            hap_counts[processed_gt] += 1
-    
-    return sample_data, hap_counts
+# Removed legacy line-by-line processing function
     
 def write_output(data, output_path, hap_counts):
+    total = sum(hap_counts.values()) or 1
+    output_data = []
     with open(output_path, 'w') as f:
         f.write('Chr\tPosition\tREF\tALT\tSample\tGT\tAlleles\tFrequency\tBiological_Meaning\n')
-        total = sum(hap_counts.values()) or 1
         for sample, genotype_info, ref, alts, chrom, pos in data:
             freq = hap_counts[genotype_info] / total
             line = [
                 chrom, pos, ref, ",".join(alts), sample, genotype_info[0], genotype_info[1], f"{freq:.2%}", genotype_info[2]
             ]
             f.write('\t'.join(map(str, line)) + '\n')
+            output_data.append((chrom, pos, ref, ",".join(alts)) + genotype_info + (freq,))
+    return output_data, hap_counts, total
+
+def format_console_output(hap_counts, total):
+    headers = ['Chr', 'Position', 'REF', 'ALT', 'GT', 'Alleles', 'Frequency', 'Biological_Meaning']
+    stats = defaultdict(list)
+    
+    for genotype_info, count in hap_counts.items():
+        freq = count / total * 100
+        key = (genotype_info[0], genotype_info[1], genotype_info[3])
+        stats[key].append((freq, count))
+    
+    lines = []
+    for (gt, alleles, bio_meaning), values in stats.items():
+        total_freq = sum(f for f, _ in values)
+        lines.append({
+            'GT': gt,
+            'Alleles': alleles,
+            'Frequency': f"{total_freq:.1%}",
+            'Biological_Meaning': bio_meaning
+        })
+    
+    # 生成表格输出
+    table = tabulate(
+        [(item['GT'], item['Alleles'], item['Frequency'], item['Biological_Meaning']) for item in lines],
+        headers=['Chr', 'Position', 'REF', 'ALT', 'GT', 'Alleles', 'Frequency', 'Biological_Meaning'],
+        tablefmt='plain',
+        numalign='center',
+        stralign='center'
+    )
+    return table
 
 def main():
     args = parse_args()
@@ -119,7 +165,12 @@ def main():
     
     sample_data, hap_counts = parse_vcf(args.vcf, args.chr, start_window, end_window)
     
-    write_output(sample_data, args.output, hap_counts)
+    output_data, hap_counts, total = write_output(sample_data, args.output, hap_counts)
+    
+    # 打印控制台统计信息
+    print("\nVariant Statistics:")
+    print(format_console_output(hap_counts, total))
+    print(f"\nTotal samples processed: {total}")
 
 if __name__ == '__main__':
     main()
