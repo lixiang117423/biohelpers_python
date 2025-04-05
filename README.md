@@ -224,6 +224,10 @@ bash run_hisat2.sh
 
 ## get haplotype information
 
+```bash
+tabix example/chr1.36545388.snp.vcf
+```
+
 ```bash 
 get_hap -h
 usage: get_hap.py [-h] -v VCF -c CHR -p POSITION [-s START] [-e END] -o OUTPUT
