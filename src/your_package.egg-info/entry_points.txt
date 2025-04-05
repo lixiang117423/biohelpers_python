@@ -1,0 +1,8 @@
+[console_scripts]
+download_hmm = biohelpers.download_hmm:main
+get_fq_file = biohelpers.get_fq_file_from_ena:main
+get_fq_meta = biohelpers.get_fq_meta_from_ena:main
+get_hap = biohelpers.get_hap:main
+parse_longest_mrna = biohelpers.parse_longest_mrna:main
+process_blast = biohelpers.process_blast_result:main
+run_hisat2 = biohelpers.run_hisat2:main

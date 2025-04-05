@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: your-package
+Version: 1.0.4.dev0+ga667abf.d20250405
+License-File: LICENSE
+Requires-Dist: Biopython>=1.81
+Requires-Dist: pyvcf3
+Requires-Dist: Cython
+Requires-Dist: numpy
+Requires-Dist: pandas
+Requires-Dist: concurrent-log-handler
+Dynamic: license-file
