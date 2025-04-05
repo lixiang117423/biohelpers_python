@@ -1,5 +1,7 @@
 import argparse
+import os
 import gzip
+import io
 from collections import defaultdict
 
 def parse_args():
@@ -15,7 +17,13 @@ def parse_args():
 def validate_args(args):
     if args.start < 0 or args.end < 0:
         raise ValueError('Window size cannot be negative')
-    # 移除文件扩展名验证以支持更多格式
+    if not args.output:
+        raise ValueError('Output path cannot be empty')
+    if not os.path.exists(args.vcf):
+        raise FileNotFoundError(f'VCF file not found: {args.vcf}')
+    output_dir = os.path.dirname(args.output)
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
 
 def process_genotype(gt, ref, alts):
     if gt in ('./.', '.|.'):
@@ -45,40 +53,51 @@ def process_genotype(gt, ref, alts):
 def parse_vcf(vcf_path, target_chr, start_pos, end_pos):
     samples = []
     hap_counts = defaultdict(int)
-    # 通过魔数检测文件类型
-    with open(vcf_path, 'rb') as test_f:
-        header = test_f.read(2)
-    
-    if header == b'\x1f\x8b':
-        open_func = gzip.open
-    else:
-        open_func = open
     
     try:
-        with open_func(vcf_path, 'rt' if isinstance(open_func, type(open)) else 'rb') as f:
-            sample_data = []
-            for line in f:
-                if line.startswith('#CHROM'):
-                    samples = line.strip().split('\t')[9:]
-                    continue
-                if line.startswith('#'):
-                    continue
-                
-                fields = line.strip().split('\t')
-                chrom, pos = fields[0], int(fields[1])
-                
-                if chrom != target_chr or not (start_pos <= pos <= end_pos):
-                    continue
-                
-                ref = fields[3]
-                alts = fields[4].split(',')
-                for sample, gt in zip(samples, fields[9:]):
-                    processed_gt = process_genotype(gt.split(':')[0], ref, alts)
-                    sample_data.append((sample, processed_gt, ref, alts, chrom, pos))
-                    hap_counts[processed_gt] += 1
-            return sample_data, hap_counts
+        with open(vcf_path, 'rb') as test_f:
+            header = test_f.read(2)
     except IOError as e:
-        raise ValueError(f'Failed to open VCF file: {str(e)}')
+        raise RuntimeError(f'File access error: {str(e)}') from e
+
+    try:
+        # Use context manager to handle files uniformly
+        if header == b'\x1f\x8b':
+            with gzip.open(vcf_path, 'rb') as gz_file:
+                with io.TextIOWrapper(gz_file, encoding='utf-8', errors='replace') as f:
+                    return _process_file(f, target_chr, start_pos, end_pos)
+        else:
+            with open(vcf_path, 'r', encoding='utf-8', errors='replace') as f:
+                return _process_file(f, target_chr, start_pos, end_pos)
+    except (gzip.BadGzipFile, UnicodeDecodeError) as e:
+        raise ValueError(f'File decoding failed: {str(e)}') from e
+
+def _process_file(f, target_chr, start_pos, end_pos):
+    samples = []
+    hap_counts = defaultdict(int)
+    sample_data = []
+    
+    for line in f:
+        if line.startswith('#CHROM'):
+            samples = line.strip().split('\t')[9:]
+            continue
+        if line.startswith('#'):
+            continue
+        
+        fields = line.strip().split('\t')
+        chrom, pos = fields[0], int(fields[1])
+        
+        if chrom != target_chr or not (start_pos <= pos <= end_pos):
+            continue
+        
+        ref = fields[3]
+        alts = fields[4].split(',')
+        for sample, gt in zip(samples, fields[9:]):
+            processed_gt = process_genotype(gt.split(':')[0], ref, alts)
+            sample_data.append((sample, processed_gt, ref, alts, chrom, pos))
+            hap_counts[processed_gt] += 1
+    
+    return sample_data, hap_counts
     
 def write_output(data, output_path, hap_counts):
     with open(output_path, 'w') as f:
