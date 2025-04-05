@@ -1,9 +1,9 @@
 import argparse
-import os
 import gzip
-import io
+import subprocess
+import os
+import tempfile
 from collections import defaultdict
-from tabulate import tabulate
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Extract haplotype information from VCF files')
@@ -18,13 +18,7 @@ def parse_args():
 def validate_args(args):
     if args.start < 0 or args.end < 0:
         raise ValueError('Window size cannot be negative')
-    if not args.output:
-        raise ValueError('Output path cannot be empty')
-    if not os.path.exists(args.vcf):
-        raise FileNotFoundError(f'VCF file not found: {args.vcf}')
-    output_dir = os.path.dirname(args.output)
-    if output_dir:
-        os.makedirs(output_dir, exist_ok=True)
+    # 移除文件扩展名验证以支持更多格式
 
 def process_genotype(gt, ref, alts):
     if gt in ('./.', '.|.'):
@@ -32,7 +26,7 @@ def process_genotype(gt, ref, alts):
     
     alleles = []
     separator = '|' if '|' in gt else '/'
-    phase_info = 'Phased' if separator == '|' else 'Unphased'
+    # phase_info = 'Phased' if separator == '|' else 'Unphased'
     
     for code in gt.split(separator):
         if code == '.':
@@ -52,125 +46,95 @@ def process_genotype(gt, ref, alts):
     return (gt, base_combination, biological_meaning)
 
 def parse_vcf(vcf_path, target_chr, start_pos, end_pos):
-    import pandas as pd
-    
+    temp_dir = tempfile.mkdtemp()
+    intermediate_vcf = os.path.normpath(os.path.join(temp_dir, 'filtered.vcf.gz'))
+
     try:
-        # 自动检测压缩格式并读取
-        # 获取样本名称
-        with gzip.open(vcf_path, 'rt') if vcf_path.endswith('.gz') else open(vcf_path, 'r') as f:
+        if subprocess.run(['bcftools', '--version'], capture_output=True).returncode != 0:
+            raise EnvironmentError('请先安装并配置bcftools环境')
+
+        cmd = [
+            'bcftools', 'view',
+            '-r', f'{target_chr}:{start_pos}-{end_pos}',
+            '-Oz', '-o', intermediate_vcf,
+            os.path.normpath(vcf_path)
+        ]
+        subprocess.run(cmd, check=True)
+
+        # 使用预处理后的文件继续处理
+        samples = []
+        hap_counts = defaultdict(int)
+        sample_data = []
+        with gzip.open(intermediate_vcf, 'rt') as f:
             for line in f:
                 if line.startswith('#CHROM'):
                     samples = line.strip().split('\t')[9:]
-                    if not samples:
-                        raise ValueError('No samples found in VCF header')
-                    break
-        
-        # 读取数据并保留所有样本列
-        # 加载数据并处理压缩格式
-        df = pd.read_csv(
-            vcf_path,
-            compression='gzip' if vcf_path.endswith('.gz') else None,
-            comment='#',
-            sep='\t',
-            header=None,
-            usecols=[0,1,3,4] + list(range(9, 9 + len(samples))),
-            low_memory=False,
-            dtype={'CHROM':'str', 'POS':'int32', 'REF':'str', 'ALT':'str'},
-            names=['CHROM','POS','REF','ALT'] + samples
-        )
-        
-        # 向量化筛选并转换数据格式
-        filtered = df[
-            (df.CHROM == target_chr) & 
-            (df.POS.between(start_pos, end_pos))
-        ].melt(
-            id_vars=['CHROM','POS','REF','ALT'],
-            value_vars=samples,
-            var_name='Sample',
-            value_name='GT'
-        )
-
-        # 批量处理基因型数据
-        sample_data = []
-        hap_counts = defaultdict(int)
-        for _, row in filtered.iterrows():
-            gt = row['GT'].split(':')[0]
-            processed = process_genotype(gt, row['REF'], row['ALT'].split(','))
-            sample_data.append((
-                row['Sample'],
-                processed,
-                row['REF'],
-                row['ALT'].split(','),
-                row['CHROM'],
-                row['POS']
-            ))
-            hap_counts[processed] += 1
-        
-        return sample_data, hap_counts
-        
-    except Exception as e:
-        raise RuntimeError(f'VCF processing error: {str(e)}') from e
-
-# Removed legacy line-by-line processing function
-    
+                    continue
+                if line.startswith('#'):
+                    continue
+                
+                fields = line.strip().split('\t')
+                chrom, pos = fields[0], int(fields[1])
+                
+                if chrom != target_chr or not (start_pos <= pos <= end_pos):
+                    continue
+                
+                ref = fields[3]
+                alts = fields[4].split(',')
+                for sample, gt in zip(samples, fields[9:]):
+                    processed_gt = process_genotype(gt.split(':')[0], ref, alts)
+                    sample_data.append((sample, processed_gt, ref, alts, chrom, pos))
+                    hap_counts[processed_gt] += 1
+            return sample_data, hap_counts
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f'bcftools执行失败: {e.stderr.decode()}') from e
+    finally:
+        if os.path.exists(intermediate_vcf):
+            os.remove(intermediate_vcf)
+        os.rmdir(temp_dir)
 def write_output(data, output_path, hap_counts):
-    total = sum(hap_counts.values()) or 1
-    output_data = []
     with open(output_path, 'w') as f:
         f.write('Chr\tPosition\tREF\tALT\tSample\tGT\tAlleles\tFrequency\tBiological_Meaning\n')
+        total = sum(hap_counts.values()) or 1
         for sample, genotype_info, ref, alts, chrom, pos in data:
             freq = hap_counts[genotype_info] / total
             line = [
                 chrom, pos, ref, ",".join(alts), sample, genotype_info[0], genotype_info[1], f"{freq:.2%}", genotype_info[2]
             ]
             f.write('\t'.join(map(str, line)) + '\n')
-            output_data.append((chrom, pos, ref, ",".join(alts)) + genotype_info + (freq,))
-    return output_data, hap_counts, total
 
-def format_console_output(hap_counts, total):
-    headers = ['Chr', 'Position', 'REF', 'ALT', 'GT', 'Alleles', 'Frequency', 'Biological_Meaning']
-    stats = defaultdict(list)
+def format_console_output(data):
+    unique_stats = defaultdict(lambda: {'count':0, 'samples':set()})
+    total_samples = len({entry[0] for entry in data})
     
-    for genotype_info, count in hap_counts.items():
-        freq = count / total * 100
-        key = (genotype_info[0], genotype_info[1], genotype_info[3])
-        stats[key].append((freq, count))
+    for entry in data:
+        key = (
+            entry[4],  # chrom
+            entry[5],  # pos
+            entry[2],  # ref
+            ','.join(entry[3]),  # alts
+            entry[1][0],  # GT
+            entry[1][1]  # alleles
+        )
+        unique_stats[key]['count'] += 1
+        unique_stats[key]['samples'].add(entry[0])
     
-    lines = []
-    for (gt, alleles, bio_meaning), values in stats.items():
-        total_freq = sum(f for f, _ in values)
-        lines.append({
-            'GT': gt,
-            'Alleles': alleles,
-            'Frequency': f"{total_freq:.1%}",
-            'Biological_Meaning': bio_meaning
-        })
-    
-    # 生成表格输出
-    table = tabulate(
-        [(item['GT'], item['Alleles'], item['Frequency'], item['Biological_Meaning']) for item in lines],
-        headers=['Chr', 'Position', 'REF', 'ALT', 'GT', 'Alleles', 'Frequency', 'Biological_Meaning'],
-        tablefmt='plain',
-        numalign='center',
-        stralign='center'
-    )
-    return table
+    print('\nConsolidated Haplotype Statistics:')
+    print('Chr\tPosition\tREF\tALT\tGT\tAlleles\tUniqueSamples\tFrequency')
+    for key in sorted(unique_stats.keys()):
+        stats = unique_stats[key]
+        freq = stats['count'] / len(data)
+        print(f'{key[0]}\t{key[1]}\t{key[2]}\t{key[3]}\t{key[4]}\t{key[5]}\t{len(stats["samples"])}\t{freq:.2%}')
+
 
 def main():
     args = parse_args()
     validate_args(args)
-    
     start_window = args.position - args.start
     end_window = args.position + args.end
-    
     sample_data, hap_counts = parse_vcf(args.vcf, args.chr, start_window, end_window)
-    
-    output_data, hap_counts, total = write_output(sample_data, args.output, hap_counts)
-    
-    # 打印控制台统计信息
-    print("\nVariant Statistics:")
-    print(format_console_output(hap_counts, total))
-    print(f"\nTotal samples processed: {total}")
+    write_output(sample_data, args.output, hap_counts)
+    format_console_output(sample_data)
 
 if __name__ == '__main__':
     main()

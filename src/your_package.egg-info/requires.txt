@@ -1,0 +1,6 @@
+Biopython>=1.81
+pyvcf3
+Cython
+numpy
+pandas
+concurrent-log-handler
