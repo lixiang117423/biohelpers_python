@@ -1,9 +1,13 @@
 [build-system]
-requires = ["setuptools>=61.0.0", "wheel"]
+requires = ["setuptools>=61.0.0", "setuptools-scm>=6.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
 # 禁用本地版本生成
-local_scheme = "no-local-version"
+# local_scheme = "no-local-version"
 # 简化开发版本格式
-version_scheme = "release-branch-semver"
+# version_scheme = "release-branch-semver"
+
+# 版本号格式：从Git标签提取（如v1.0.0）
+version_scheme = "no-guess-dev"
+local_scheme = "no-local-version"

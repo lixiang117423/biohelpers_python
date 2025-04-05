@@ -1,0 +1,10 @@
+version_variables:
+  - src/biohelpers/__init__.py  # 可选：自动更新代码中的版本变量
+
+commit_parser: angular  # 使用Angular风格提交消息解析
+major_tag: major         # Major版本标签格式
+minor_tag: minor         # Minor版本标签格式
+patch_tag: patch         # Patch版本标签格式
+
+branches:
+  - name: main           # 仅在main分支触发版本升级
