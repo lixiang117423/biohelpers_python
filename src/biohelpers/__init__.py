@@ -8,6 +8,6 @@ from .parse_longest_mrna import *
 from importlib.metadata import version, PackageNotFoundError
 
 try:
-    __version__ = version("your-package")
+    __version__ = version("biohelpers")
 except PackageNotFoundError:
     __version__ = "0.0.0.dev"  # 开发环境备用值
