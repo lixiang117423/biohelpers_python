@@ -270,7 +270,7 @@ Chr1	36545388	C	T	16	./.	./.	85.86%	Missing
 Parse gene pairs like NLR-pairs from gff file and gene id file.
 
 ```bash
-python src/biohelpers/get_gene_pairs.py -h
+get_gene_pairs -h
 usage: get_gene_pairs.py [-h] --gff GFF --id ID [--type {gene,mrna}] [--distance DISTANCE] --output OUTPUT
 
 Find gene pairs near target genes
@@ -286,7 +286,7 @@ options:
 ```
 
 ```bash
-python src/biohelpers/get_gene_pairs.py -g example/Nipponbare.gff3 -i example/rice.t2t.nlr.id.tsv -t mrna -o example/rice.nlr.pairs.txt
+get_gene_pairs -g example/Nipponbare.gff3 -i example/rice.t2t.nlr.id.tsv -t mrna -o example/rice.nlr.pairs.txt
 ```
 
 ```bash
