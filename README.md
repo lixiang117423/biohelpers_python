@@ -271,7 +271,7 @@ Parse gene pairs like NLR-pairs from gff file and gene id file.
 
 ```bash
 get_gene_pairs -h
-usage: get_gene_pairs.py [-h] --gff GFF --id ID [--type {gene,mrna}] [--distance DISTANCE] --output OUTPUT
+usage: get_gene_pairs [-h] --gff GFF --id ID [--type {gene,mrna}] [--distance DISTANCE] --output OUTPUT
 
 Find gene pairs near target genes
 
@@ -281,6 +281,7 @@ options:
   --id ID, -i ID        File containing target gene IDs
   --type {gene,mrna}, -t {gene,mrna}
   --distance DISTANCE, -d DISTANCE
+                        The number of other genes between pairs of genes. The default value is 3.
   --output OUTPUT, -o OUTPUT
                         Output filename
 ```
