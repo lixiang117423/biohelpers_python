@@ -77,7 +77,7 @@ def main():
     parser.add_argument("--gff", "-g", required=True, help="Path to GFF file")
     parser.add_argument("--id", "-i", required=True, help="File containing target gene IDs")
     parser.add_argument("--type", "-t", choices=["gene", "mrna"], default="gene")
-    parser.add_argument("--distance", "-d", type=int, default=3)
+    parser.add_argument("--distance", "-d", type=int, default=3, help="The number of other genes between pairs of genes. The default value is 3.")
     parser.add_argument("--output", "-o", required=True, help="Output filename")
     args = parser.parse_args()
 
