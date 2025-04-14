@@ -196,7 +196,7 @@ Successfully processed 85500 query sequences, retained 85500 records.
 Results saved to: test/filtered.blast.txt
 ```
 
-## run [hisat2](https://github.com/DaehwanKimLab/hisat2)
+### run [hisat2](https://github.com/DaehwanKimLab/hisat2)
 
 ```bash
 usage: run_hisat2.py [-h] -x INDEX [-t THREADS] -f FOLDER [-m {run,save}] -o OUTPUT
@@ -223,7 +223,7 @@ Please run the following command to execute the alignment:
 bash run_hisat2.sh
 ```
 
-## get haplotype information
+### get haplotype information
 
 ```bash
 tabix example/chr1.36545388.snp.vcf
@@ -265,6 +265,41 @@ Chr1	36545388	C	T	15	0/1	C/T	8.08%	Heterozygous
 Chr1	36545388	C	T	16	./.	./.	85.86%	Missing
 ```
 
+### get_gene_pairs
+
+Parse gene pairs like NLR-pairs from gff file and gene id file.
+
+```bash
+python src/biohelpers/get_gene_pairs.py -h
+usage: get_gene_pairs.py [-h] --gff GFF --id ID [--type {gene,mrna}] [--distance DISTANCE] --output OUTPUT
+
+Find gene pairs near target genes
+
+options:
+  -h, --help            show this help message and exit
+  --gff GFF, -g GFF     Path to GFF file
+  --id ID, -i ID        File containing target gene IDs
+  --type {gene,mrna}, -t {gene,mrna}
+  --distance DISTANCE, -d DISTANCE
+  --output OUTPUT, -o OUTPUT
+                        Output filename
+```
+
+```bash
+python src/biohelpers/get_gene_pairs.py -g example/Nipponbare.gff3 -i example/rice.t2t.nlr.id.tsv -t mrna -o example/rice.nlr.pairs.txt
+```
+
+```bash
+Chr	Gene.1	Gene.2	Chr	Start.1	End.1	Strand.1	Start.2	End.2	Strand.2
+Chr1	AGIS_Os01g001230	AGIS_Os01g001260	Chr1	694530	698751	+	714050	721032	+
+Chr1	AGIS_Os01g004450	AGIS_Os01g004470	Chr1	2677926	2680898	-	2689993	2692962	-
+Chr1	AGIS_Os01g014540	AGIS_Os01g014570	Chr1	9306131	9312748	+	9327119	9331020	+
+Chr1	AGIS_Os01g014540	AGIS_Os01g014560	Chr1	9306131	9312748	+	9319068	9322805	-
+Chr1	AGIS_Os01g014560	AGIS_Os01g014570	Chr1	9319068	9322805	-	9327119	9331020	+
+Chr1	AGIS_Os01g022210	AGIS_Os01g022230	Chr1	14622331	14627711	-	14632751	14637498	-
+Chr1	AGIS_Os01g022210	AGIS_Os01g022240	Chr1	14622331	14627711	-	14643534	14648720	-
+Chr1	AGIS_Os01g022230	AGIS_Os01g022240	Chr1	14632751	14637498	-	14643534	14648720	-
+```
 
 ## Requirements
 
