@@ -1,5 +1,8 @@
 import argparse
 
+import pandas as pd
+from natsort import index_natsorted
+
 # def natural_chrom_key(chrom):
 #     try:
 #         num_part = ''.join(filter(str.isdigit, chrom))
@@ -56,7 +59,6 @@ import argparse
 #                         pair = tuple(sorted((gene, other)))
 #                         pairs.add(pair)
 #     return pairs
-import pandas as pd
 
 
 def parse_gff_features(gff_path):
@@ -198,9 +200,6 @@ def parse_gff_features(gff_path):
     return merged_df
 
 
-import pandas as pd
-
-
 def find_gene_pairs(
     gene_info: pd.DataFrame, gene_id_input: list, id_type: str, distnace: int
 ) -> pd.DataFrame:
@@ -219,6 +218,7 @@ def find_gene_pairs(
     required_cols = {
         "mrna_id",
         "chr",
+        "strand",
         "index_temp",
         "gene_id",
         "gene_start",
@@ -280,9 +280,11 @@ def find_gene_pairs(
                 "gene_id_1": current_data["gene_id"],
                 "gene_start_1": current_data["gene_start"],
                 "gene_end_1": current_data["gene_end"],
+                "strand_1": current_data["strand"],
                 "gene_id_2": neighbor["gene_id"],
                 "gene_start_2": neighbor["gene_start"],
                 "gene_end_2": neighbor["gene_end"],
+                "strand_2": neighbor["strand"],
             }
             all_pairs.append(pair)
 
@@ -294,6 +296,16 @@ def find_gene_pairs(
     df_clean = all_pairs.drop_duplicates(subset=["chr", "sorted_cols"], keep="first")
     df_clean = df_clean.drop(columns=["sorted_cols"])
     df_clean = df_clean.sort_values(by=["chr", "gene_start_1"], ascending=[True, True])
+
+    # 按自然顺序排序
+    df_clean = df_clean.sort_values(
+        "chr",
+        key=lambda x: x.str.replace("chr", "").map(
+            lambda s: (s.isdigit(), int(s) if s.isdigit() else s)
+        ),
+    )
+    # 或使用natsort的索引排序
+    df_clean = df_clean.iloc[index_natsorted(df_clean["chr"])]
 
     return df_clean
 
