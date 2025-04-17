@@ -287,7 +287,7 @@ options:
 ```
 
 ```bash
-get_gene_pairs.py -g data/gff3/534M.gff3 -i result/03.nlr-pairs/534M.nlr.id.txt -t mrna -o result/03.nlr-pairs/534M.NLR-pairs.txt
+get_gene_pairs -g data/gff3/534M.gff3 -i result/03.nlr-pairs/534M.nlr.id.txt -t mrna -o result/03.nlr-pairs/534M.NLR-pairs.txt
 ```
 
 ```bash
