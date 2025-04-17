@@ -1,0 +1,10 @@
+# 忽略大文件
+example/Nipponbare.gff3
+example/Nipponbare.fa
+example/longest.pep.fa
+example/Nipponbare.gene.info.txt
+biohelpers.egg-info/
+dist/
+example/diamond.blast.txt
+test/filtered.blast.txt
+example/rice* 
