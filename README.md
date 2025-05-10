@@ -304,6 +304,26 @@ chr1	Gla4_010.3271	31661494	31663020	+	Gla4_010.3272	31668519	31670025	+
 chr1	Gla4_010.3271	31661494	31663020	+	Gla4_010.3273	31672690	31674213	+
 chr1	Gla4_010.3271	31661494	31663020	+	Gla4_010.3274	31675773	31676637	+
 ```
+### new gff file from BRAKER result
+
+```bash
+usage: new_gff_braker.py [-h] -i INOUT -s SPECIES [-d DISTANCE] -o OUTPUT
+
+Process Braker GTF to GFF3 with customized gene/mRNA/feature annotation.
+
+options:
+  -h, --help            show this help message and exit
+  -i, --inout INOUT     Input GTF file (default: None)
+  -s, --species SPECIES
+                        Species name string (for prefix, e.g. Os) (default: Os)
+  -d, --distance DISTANCE
+                        Gene id multiplier/distance, like Os01g000010 and Os01g000020. (default: 10)
+  -o, --output OUTPUT   Output GFF3 file (default: None)
+```
+
+```bash
+new_gff_braker -i example/braker.gtf -s Os -d 10 -o example/braker.gff3
+```
 
 ## Requirements
 
