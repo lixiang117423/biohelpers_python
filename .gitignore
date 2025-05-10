@@ -8,3 +8,5 @@ dist/
 example/diamond.blast.txt
 test/filtered.blast.txt
 example/rice* 
+src/biohelpers/tmp.py
+src/biohelpers/temp.ipynb
