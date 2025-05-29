@@ -325,6 +325,46 @@ options:
 new_gff_braker -i example/braker.gtf -s Os -d 10 -o example/braker.gff3
 ```
 
+### VCF file information
+
+```bash
+vcf_stats -h
+```
+
+```bash
+usage: test.py [-h] [-o OUTPUT] [-v] [--sample-details] [--total-only] vcf_file
+
+Count SNPs and INDELs per chromosome in VCF files (total and per-sample)
+
+positional arguments:
+  vcf_file              Input VCF file path
+
+options:
+  -h, --help            show this help message and exit
+  -o OUTPUT, --output OUTPUT
+                        Output file path (optional, prints to stdout if not specified)
+  -v, --verbose         Enable verbose output
+  --sample-details      Show detailed per-sample statistics for each chromosome
+  --total-only          Show only total statistics, skip per-sample analysis
+
+Examples:
+  test.py input.vcf
+  test.py sample.vcf -o output.txt
+  test.py variants.vcf --output results.txt --sample-details
+
+Notes:
+  - SNP: Single nucleotide polymorphism (REF and ALT both length 1)
+  - INDEL: Insertion/deletion variant (REF and ALT different lengths)
+  - MNV: Multi-nucleotide variant (REF and ALT same length but >1)
+  - Per-sample analysis requires sample columns in VCF (columns 10+)
+  - Only variants present in each sample (non-reference genotypes) are counted
+  - Compressed VCF files (.vcf.gz) need to be decompressed first
+```
+
+```bash
+vcf_stats.py input.vcf --sample-details -o clean_data.tsv
+```
+
 ## Requirements
 
 - Python 3.7+
