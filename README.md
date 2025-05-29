@@ -328,11 +328,11 @@ new_gff_braker -i example/braker.gtf -s Os -d 10 -o example/braker.gff3
 ### VCF file information
 
 ```bash
-vcf_stats -h
+stat_vcf -h
 ```
 
 ```bash
-usage: test.py [-h] [-o OUTPUT] [-v] [--sample-details] [--total-only] vcf_file
+usage: stat_vcf [-h] [-o OUTPUT] [-v] [--sample-details] [--total-only] vcf_file
 
 Count SNPs and INDELs per chromosome in VCF files (total and per-sample)
 
@@ -362,7 +362,7 @@ Notes:
 ```
 
 ```bash
-vcf_stats.py input.vcf --sample-details -o clean_data.tsv
+stat_vcf input.vcf --sample-details -o clean_data.tsv
 ```
 
 ## Requirements
