@@ -304,6 +304,66 @@ chr1	Gla4_010.3271	31661494	31663020	+	Gla4_010.3272	31668519	31670025	+
 chr1	Gla4_010.3271	31661494	31663020	+	Gla4_010.3273	31672690	31674213	+
 chr1	Gla4_010.3271	31661494	31663020	+	Gla4_010.3274	31675773	31676637	+
 ```
+### new gff file from BRAKER result
+
+```bash
+usage: new_gff_braker.py [-h] -i INOUT -s SPECIES [-d DISTANCE] -o OUTPUT
+
+Process Braker GTF to GFF3 with customized gene/mRNA/feature annotation.
+
+options:
+  -h, --help            show this help message and exit
+  -i, --inout INOUT     Input GTF file (default: None)
+  -s, --species SPECIES
+                        Species name string (for prefix, e.g. Os) (default: Os)
+  -d, --distance DISTANCE
+                        Gene id multiplier/distance, like Os01g000010 and Os01g000020. (default: 10)
+  -o, --output OUTPUT   Output GFF3 file (default: None)
+```
+
+```bash
+new_gff_braker -i example/braker.gtf -s Os -d 10 -o example/braker.gff3
+```
+
+### VCF file information
+
+```bash
+vcf_stats -h
+```
+
+```bash
+usage: test.py [-h] [-o OUTPUT] [-v] [--sample-details] [--total-only] vcf_file
+
+Count SNPs and INDELs per chromosome in VCF files (total and per-sample)
+
+positional arguments:
+  vcf_file              Input VCF file path
+
+options:
+  -h, --help            show this help message and exit
+  -o OUTPUT, --output OUTPUT
+                        Output file path (optional, prints to stdout if not specified)
+  -v, --verbose         Enable verbose output
+  --sample-details      Show detailed per-sample statistics for each chromosome
+  --total-only          Show only total statistics, skip per-sample analysis
+
+Examples:
+  test.py input.vcf
+  test.py sample.vcf -o output.txt
+  test.py variants.vcf --output results.txt --sample-details
+
+Notes:
+  - SNP: Single nucleotide polymorphism (REF and ALT both length 1)
+  - INDEL: Insertion/deletion variant (REF and ALT different lengths)
+  - MNV: Multi-nucleotide variant (REF and ALT same length but >1)
+  - Per-sample analysis requires sample columns in VCF (columns 10+)
+  - Only variants present in each sample (non-reference genotypes) are counted
+  - Compressed VCF files (.vcf.gz) need to be decompressed first
+```
+
+```bash
+vcf_stats.py input.vcf --sample-details -o clean_data.tsv
+```
 
 ## Requirements
 
