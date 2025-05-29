@@ -3,6 +3,8 @@ example/Nipponbare.gff3
 example/Nipponbare.fa
 example/longest.pep.fa
 example/Nipponbare.gene.info.txt
+example/braker.gff3
+example/braker.gtf
 biohelpers.egg-info/
 dist/
 example/diamond.blast.txt
