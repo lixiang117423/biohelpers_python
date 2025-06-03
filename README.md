@@ -365,6 +365,33 @@ Notes:
 stat_vcf input.vcf --sample-details -o clean_data.tsv
 ```
 
+### run fastp
+
+```bash
+# Basic usage
+run_fastp -i 01.data -o 02.clean_data
+
+# View all parameters
+run_fastp --help
+
+# Custom parameters
+run_fastp \
+    -i 01.data \
+    -o 02.clean_data \
+    -t 8 \
+    -q 25 \
+    -l 100 \
+    --verbose \
+    --log
+
+# Different file patterns
+run_fastp \
+    -i raw_data \
+    -o clean_data \
+    -p "*.R1.fastq.gz" \
+    -t 12
+```
+
 ## Requirements
 
 - Python 3.7+
