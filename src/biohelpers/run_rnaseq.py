@@ -575,13 +575,13 @@ def main():
     print(f"{'=' * 60}")
     merge_expression_matrix(fpkm_files, args.output)
 
-    print(f"\n{'=' * 60}")
-    print("Analysis completed!")
-    print(f"{'=' * 60}")
-    print(f"Output files in: {args.output}")
-    print("  - all.fpkm.tpm.txt: FPKM and TPM matrix for all samples.")
-    print("  - fpkm.txt: FPKM only matrix for all samples.")
-    print("  - tpm.txt: TPM only matrix for all samples.")
+    # print(f"\n{'=' * 60}")
+    # print("Analysis completed!")
+    # print(f"{'=' * 60}")
+    # print(f"Output files in: {args.output}")
+    # print("  - all.fpkm.tpm.txt: FPKM and TPM matrix for all samples.")
+    # print("  - fpkm.txt: FPKM only matrix for all samples.")
+    # print("  - tpm.txt: TPM only matrix for all samples.")
 
 
 if __name__ == "__main__":
