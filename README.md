@@ -392,6 +392,33 @@ run_fastp \
     -t 12
 ```
 
+### run RNA-Seq using HISAT2
+
+```bash
+run_rnaseq -h   
+
+usage: run_rnaseq [-h] -g GENOME -f GTF -i INPUT -o OUTPUT [-p PATTERN] [-r {yes,y,no,n}] [-t THREADS]
+
+RNA-seq analysis pipeline: HISAT2 + StringTie
+
+options:
+  -h, --help            show this help message and exit
+  -g, --genome GENOME   Genome fasta file path
+  -f, --gtf GTF         Gene annotation GTF file path
+  -i, --input INPUT     Input fastq file directory or sample information file
+  -o, --output OUTPUT   Output directory
+  -p, --pattern PATTERN
+                        Fastq file naming pattern, e.g., "*.R1.fastq.gz" or "*_1.fq.gz", * represents sample name
+  -r, --remove {yes,y,no,n}
+                        Remove BAM files after processing (default: no)
+  -t, --threads THREADS
+                        Number of threads (default: 8)
+```
+
+```bash
+run_rnaseq -g 03.genome/genome.fa -f 03.genome/genome.gtf -i 01.data/raw -o output -t 60 -p "*_1.fq.gz"
+```
+
 ## Requirements
 
 - Python 3.7+
