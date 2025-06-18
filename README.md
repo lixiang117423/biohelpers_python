@@ -3,7 +3,7 @@ Some useful script tools written during data processing.
 ## Installation
 
 ```bash
-git clone git@github.com:lixiang117423/biohelpers_python.git
+git clone https://github.com/lixiang117423/biohelpers_python.git
 
 cd biohelpers_python
 
@@ -417,6 +417,19 @@ options:
 
 ```bash
 run_rnaseq -g 03.genome/genome.fa -f 03.genome/genome.gtf -i 01.data/raw -o output -t 60 -p "*_1.fq.gz"
+```
+
+### Clean fasta file
+
+```bash
+# 基本用法
+clean_fasta -i input.fasta -s ".*-" -o output.fasta
+
+# 完整参数名
+clean_fasta --input sequences.fa --string "N-" --output clean_sequences.fa
+
+# 查看帮助
+clean_fasta -h
 ```
 
 ## Requirements
