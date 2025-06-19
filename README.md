@@ -432,6 +432,12 @@ clean_fasta --input sequences.fa --string "N-" --output clean_sequences.fa
 clean_fasta -h
 ```
 
+### Get gene information from GFF3
+
+```bash
+get_gene_info -g my_genes.gff3 -o gene_transcript_combined.tsv
+ ```
+
 ## Requirements
 
 - Python 3.7+
