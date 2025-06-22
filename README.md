@@ -438,6 +438,28 @@ clean_fasta -h
 get_gene_info -g my_genes.gff3 -o gene_transcript_combined.tsv
  ```
 
+### Run Augustus taining
+
+```bash
+# Display help information
+run_augustus_train -h
+run_augustus_train --help
+
+# Basic usage
+run_augustus_train --species_name Rice_NLR --genome_file genome.fa --gff_file annotations.gff3
+```
+
+```bash
+run_augustus_train \
+  --species_name "Rice_35minicore_NLR" \
+  --genome_file "/path/to/genome.fa" \
+  --gff_file "/path/to/annotations.gff3" \
+  --output_dir "./augustus_results" \
+  --augustus_path "/share/org/YZWL/yzwl_lixg/miniforge3/envs/Augustus_v.3.5.0/bin" \
+  --train_ratio 0.8 \
+  --flank_length 1000
+```
+
 ## Requirements
 
 - Python 3.7+
