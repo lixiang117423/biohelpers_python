@@ -1,12 +1,70 @@
+# pyproject.toml
+
 [build-system]
-requires = ["setuptools>=61.0", "setuptools_scm[toml]>=6.2", "cython"] # 如果你的包需要Cython来构建，就加上它
+# 保留你的构建依赖，Cython 和 setuptools_scm 是必需的
+requires = ["setuptools>=61.0", "setuptools_scm[toml]>=6.2", "cython"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "biohelpers"
-dynamic = ["version"]
+dynamic = ["version"]  # 告诉构建工具，版本号由 setuptools_scm 动态生成
+description = "Useful function for biologist"
+readme = "README.md"   # 对应 setup.cfg 的 long_description
+license = { file = "LICENSE" } # 对应 setup.cfg 的 license 和 license_files
+authors = [
+  { name = "Xiang Li", email = "lixiang117423@gmail.com" },
+]
+keywords = ["bioinformatics", "genome-analysis"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+]
+requires-python = ">=3.7"  # 建议添加Python版本要求
+
+# 对应 setup.cfg 的 [options] install_requires
+dependencies = [
+    "Biopython>=1.81",
+    # "PyVCF",
+    "numpy",
+    "pandas",
+    "concurrent-log-handler",
+    "requests>=2.31.0" # 这个依赖在你的第一个错误日志里有，但setup.cfg里漏了，我帮你加上
+]
+
+# 对应 setup.cfg 的 [options.entry_points]
+[project.scripts]
+parse_longest_mrna = "biohelpers.parse_longest_mrna:main"
+download_hmm = "biohelpers.download_hmm:main"
+get_fq_file = "biohelpers.get_fq_file_from_ena:main"
+get_fq_meta = "biohelpers.get_fq_meta_from_ena:main"
+process_blast = "biohelpers.process_blast_result:main"
+run_hisat2 = "biohelpers.run_hisat2:main"
+get_hap = "biohelpers.get_hap:main"
+get_gene_pairs = "biohelpers.get_gene_pairs:main"
+get_cov = "biohelpers.get_cov:main"
+new_gff_braker = "biohelpers.new_gff_braker:main"
+stat_vcf = "biohelpers.stat_vcf:main"
+run_fastp = "biohelpers.run_fastp:main"
+run_rnaseq = "biohelpers.run_rnaseq:main"
+clean_fasta = "biohelpers.clean_fasta:main"
+get_gene_info = "biohelpers.get_gene_info:main"
+# 注意：你的 setup.cfg 里的这行末尾有个 typo 'maintoml'，我已修正为 'main'
+run_augustus_train = "biohelpers.run_augustus_train:main"
+
+# 对应 setup.cfg 的 url
+[project.urls]
+Homepage = "https://github.com/lixiang117423/biohelpers_python"
+# "Bug Tracker" = "https://github.com/lixiang117423/biohelpers_python/issues" # 也可以添加这个
+
+# 对应 setup.cfg 的 [options] package_dir 和 packages
+[tool.setuptools]
+package-dir = { "" = "src" }
 
 [tool.setuptools_scm]
-# 如果需要，可以在这里配置 setuptools_scm
-# 例如，将版本号写入一个文件，以便在运行时访问
+# 这个部分保持不变，用于从 git tag 自动生成版本号
+# 如果你想把版本号写入文件，可以取消下面的注释
 # write_to = "src/biohelpers/_version.py"
