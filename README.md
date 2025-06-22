@@ -10,12 +10,6 @@ cd biohelpers_python
 pip install -e .
 ```
 
-or:
-
-```bash
-pip install biohelpers
-```
-
 ## Dependencies
 
 ### Install miniforge
