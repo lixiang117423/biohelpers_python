@@ -137,11 +137,16 @@ class AugustusTrainer:
         if total_genes < 100:
             raise ValueError("Total genes less than 100, insufficient for splitting and evaluation")
             
-        # Calculate training set size
+        # Calculate test set size (randomSplit.pl puts the specified number in .train and rest in .test)
+        # To get 80% training and 20% testing, we need to specify the training count
         train_count = int(total_genes * self.config['train_ratio'])
-        self.logger.info(f"Using {train_count} genes for training, {total_genes - train_count} for testing")
+        test_count = total_genes - train_count
         
-        # Split dataset
+        self.logger.info(f"Total genes: {total_genes}")
+        self.logger.info(f"Training genes: {train_count} ({self.config['train_ratio']*100:.1f}%)")
+        self.logger.info(f"Testing genes: {test_count} ({(1-self.config['train_ratio'])*100:.1f}%)")
+        
+        # Split dataset - randomSplit.pl takes the number for the .train file
         random_split_script = os.path.join(self.config['augustus_path'], 'randomSplit.pl')
         command = f"perl {random_split_script} {self.config['training_file']} {train_count}"
         
@@ -149,6 +154,38 @@ class AugustusTrainer:
         
         self.config['train_file'] = self.config['training_file'] + '.train'
         self.config['test_file'] = self.config['training_file'] + '.test'
+        
+        # Verify the split by checking file sizes
+        if os.path.exists(self.config['train_file']) and os.path.exists(self.config['test_file']):
+            train_size = os.path.getsize(self.config['train_file'])
+            test_size = os.path.getsize(self.config['test_file'])
+            
+            # Count genes in each file to verify
+            with open(self.config['train_file'], 'r') as f:
+                actual_train_genes = f.read().count('LOCUS')
+            with open(self.config['test_file'], 'r') as f:
+                actual_test_genes = f.read().count('LOCUS')
+                
+            self.logger.info(f"Verification - Training file: {actual_train_genes} genes ({train_size/1024/1024:.1f} MB)")
+            self.logger.info(f"Verification - Testing file: {actual_test_genes} genes ({test_size/1024/1024:.1f} MB)")
+            
+            # Check if split is correct (training should be larger for ratio > 0.5)
+            if self.config['train_ratio'] > 0.5 and train_size < test_size:
+                self.logger.warning("WARNING: Training file is smaller than test file!")
+                self.logger.warning("This might indicate an issue with randomSplit.pl behavior")
+                self.logger.warning(f"Expected {train_count} training genes, got {actual_train_genes}")
+                
+                # If the split seems reversed, swap the files
+                if actual_train_genes < actual_test_genes and self.config['train_ratio'] > 0.5:
+                    self.logger.info("Swapping train and test files to correct the split...")
+                    temp_file = self.config['train_file'] + '.temp'
+                    os.rename(self.config['train_file'], temp_file)
+                    os.rename(self.config['test_file'], self.config['train_file'])
+                    os.rename(temp_file, self.config['test_file'])
+                    
+                    self.logger.info("Files swapped successfully")
+                    self.logger.info(f"Final - Training: {actual_test_genes} genes")
+                    self.logger.info(f"Final - Testing: {actual_train_genes} genes")
         
         self.logger.info("Dataset splitting completed")
         
