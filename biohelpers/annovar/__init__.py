@@ -1,57 +1,31 @@
-# =============================================================================
-# File: biohelpers/annovar/__init__.py
-# =============================================================================
 """
-ANNOVAR Annotation Module for biohelpers
-biohelpers的ANNOVAR注释模块
+ANNOVAR基因注释工具包 | ANNOVAR Gene Annotation Toolkit
+功能: VCF变异注释的完整流程，支持GFF3转换和基因注释 | 
+Features: Complete pipeline for VCF variant annotation, supporting GFF3 conversion and gene annotation
+作者 | Author: Claude  
+版本 | Version: v10 - 模块化重构版 | Modular refactored version
+日期 | Date: 2025-07-10
 
-ANNOVAR VCF annotation workflow automation module.
-ANNOVAR VCF注释工作流程自动化模块。
-
-This module provides automated ANNOVAR annotation pipeline including:
-该模块提供自动化的ANNOVAR注释流水线，包括：
-- GFF3 to GenePred conversion / GFF3到GenePred转换
-- Transcript sequence extraction / 转录本序列提取  
-- VCF processing and conversion / VCF处理和转换
-- Variant annotation / 变异注释
-
-Example usage / 使用示例:
-    from biohelpers.annovar import ANNOVARAnnotator
+使用示例 | Usage Examples:
+    from annovar import ANNOVARAnnotator, ANNOVARConfig
     
-    config = {
-        'gff3_file': 'genome.gff3',
-        'genome_file': 'genome.fasta',
-        'vcf_file': 'variants.vcf',
-        'build_ver': 'OV'
-    }
+    # 创建注释器 | Create annotator
+    annotator = ANNOVARAnnotator(
+        gff3_file="annotation.gff3",
+        genome_file="genome.fa",
+        vcf_file="variants.vcf",
+        build_ver="OV",
+        annovar_path="/path/to/annovar"
+    )
     
-    annotator = ANNOVARAnnotator(config)
-    success = annotator.run_full_pipeline()
+    # 运行注释 | Run annotation
+    annotator.run_full_pipeline()
 """
 
-from .annotator import ANNOVARAnnotator
-from .exceptions import (
-    ANNOVARError,
-    ANNOVARValidationError, 
-    ANNOVARFileNotFoundError,
-    ANNOVARCommandError
-)
-from .utils import (
-    setup_annovar_logging,
-    validate_annovar_files,
-    check_annovar_dependencies
-)
+__version__ = "10.0.0"
+__author__ = "Claude"
 
-__version__ = "1.0.0"
-__author__ = "biohelpers team"
+from .main import ANNOVARAnnotator
+from .config import ANNOVARConfig
 
-__all__ = [
-    "ANNOVARAnnotator",
-    "ANNOVARError",
-    "ANNOVARValidationError",
-    "ANNOVARFileNotFoundError", 
-    "ANNOVARCommandError",
-    "setup_annovar_logging",
-    "validate_annovar_files",
-    "check_annovar_dependencies"
-]
+__all__ = ['ANNOVARAnnotator', 'ANNOVARConfig']
